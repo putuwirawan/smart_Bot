@@ -1,9 +1,11 @@
 import mongoose from "mongoose";
+import * as dotenv from "dotenv";
 
 mongoose.set("strictQuery", false);
 async function dbConnect() {
-	const dburl: string =
-		process.env.DATABASE_LOCAL || "mongodb://localhost:27017/katul";
+	dotenv.config();
+	const dburl: string  =
+		process.env.DATABASE || '' //"mongodb://localhost:27017/katul";
 	if (mongoose.connection.readyState >= 1) {
 		return;
 	}
