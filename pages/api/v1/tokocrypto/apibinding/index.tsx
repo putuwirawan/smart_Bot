@@ -10,7 +10,7 @@ const jwt = require("jsonwebtoken");
 
 type NextApiRequestWithFormData = NextApiRequest &
 	Request & {
-		user: any;
+		user: IUser;
 	};
 
 type NextApiResponseCustom = NextApiResponse & Response;
@@ -42,16 +42,47 @@ const handler = async (
 			if (balance) {
 				const key = jwt.sign(body, process.env.JWT_SECRET);
 				try {
-					User.findByIdAndUpdate(user._id, {
-						$push: { exchangeConnect: { name: "tokocrypto", key: key } },
-					}).exec((err: any, result: IUser) => {
-						if (result) {
+					let connectExchange = user.exchangeConnect;
+					if (connectExchange && connectExchange.length > 0) {
+						let xkey = "";
+						let index = -1;
+						connectExchange.map((item, i) => {
+							if (item.name == "tokocrypto") {
+								xkey = key;
+								index = i;
+							}
+						});
+
+						if (xkey !== "") {
+							User.findOne({ _id: user._id }).then((item) => {
+								item.exchangeConnect[index].key = key;
+								item.save();
+							});
 							return res.status(200).send({ success: true, data: key });
+						} else {
+							User.findByIdAndUpdate(user._id, {
+								$push: { exchangeConnect: { name: "tokocrypto", key: key } },
+							}).exec((err: any, result: IUser) => {
+								if (result) {
+									return res.status(200).send({ success: true, data: key });
+								}
+								if (err) {
+									return errors.errorHandler(res, err.message, null);
+								}
+							});
 						}
-						if (err) {
-							return errors.errorHandler(res, err.message, null);
-						}
-					});
+					} else {
+						User.findByIdAndUpdate(user._id, {
+							$push: { exchangeConnect: { name: "tokocrypto", key: key } },
+						}).exec((err: any, result: IUser) => {
+							if (result) {
+								return res.status(200).send({ success: true, data: key });
+							}
+							if (err) {
+								return errors.errorHandler(res, err.message, null);
+							}
+						});
+					}
 				} catch (error: any) {
 					return errors.errorHandler(res, error.message, null);
 				}

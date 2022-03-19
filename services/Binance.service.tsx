@@ -1,8 +1,8 @@
 import axios from "axios";
 const qs = require("qs");
 const crypto = require("crypto");
-const { binance_url } = require("./globalVariable");
-const ExchangeUrl = binance_url;
+
+const ExchangeUrl = "https://api.binance.me/api/v3/";
 
 export async function AcountBalance(order: any) {
 	const to_sign = `recvWindow=60000&timestamp=${Date.now()}`;

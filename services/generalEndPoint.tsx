@@ -1,6 +1,6 @@
 import axios from "axios";
-const { binance_url } = require("./globalVariable");
-const ExchangeUrl = binance_url;
+
+const ExchangeUrl = "https://api.binance.me/api/v3/";
 
 export async function ServerTime() {
 	const res = await axios(`${ExchangeUrl}time`, { method: "GET" });

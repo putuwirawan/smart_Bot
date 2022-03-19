@@ -1,8 +1,8 @@
 import axios from "axios";
 const qs = require("qs");
 const crypto = require("crypto");
-const { tokocrypro_url } = require("./globalVariable");
-const ExchangeUrl = tokocrypro_url;
+
+const ExchangeUrl = "https://www.tokocrypto.com/open/v1/";
 
 
 export async function TkoAcountBalance(order:any) {

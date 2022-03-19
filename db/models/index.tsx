@@ -24,8 +24,8 @@ export const Transaction =
 	mongoose.models.Transaction ||
 	mongoose.model("Transaction", TransactionSchema);
 
-export const CoinInvest =
-	mongoose.models.CoinInvest || mongoose.model("coininvest", CoinInvestSchema);
+export const Coininvest =
+	mongoose.models.Coininvest || mongoose.model("Coininvest", CoinInvestSchema);
 
 export const Order =
-	mongoose.models.Order || mongoose.model("order", OrderSchema);
+	mongoose.models.Order || mongoose.model("Order", OrderSchema);

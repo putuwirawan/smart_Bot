@@ -15,4 +15,5 @@ export interface ILoginIn {
 interface exchangeConnect {
     name:string,
     key:string
+	_id:string
 }
