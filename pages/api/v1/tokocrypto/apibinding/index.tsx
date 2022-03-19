@@ -38,62 +38,53 @@ const handler = async (
 				apiKey: apiKey,
 				secretKey: secretKey,
 			};
-			const balance = await TkoAcountBalance({ baseAsset: "ADA", api: api });
-			if (balance) {
-				const key = jwt.sign(body, process.env.JWT_SECRET);
-				try {
-					let connectExchange = user.exchangeConnect;
-					if (connectExchange && connectExchange.length > 0) {
-						let keyId = "";
-						let indexExchange = 0;
-						connectExchange.map((item, i) => {
-							if (item.name == "tokocrypto") {
-								keyId = item._id;
-							}
-						});
-						if (keyId !== "") {
-							User.updateOne(
-								{ _id: user._id, "exchangeConnect._id": keyId },
-								{
-									$set: {
-										exchangeConnect: { key: key },
-									},
-								}
-							).then(() => {
-								return res.status(200).send({ success: true, data: key });
-							});
-						} else {
+			// const balance = await TkoAcountBalance({ baseAsset: "ADA", api: api });
+			// if (balance) {
+			const key = jwt.sign(api, process.env.JWT_SECRET);
+			try {
+				let connectExchange = user.exchangeConnect;
+
+				if (connectExchange && connectExchange.length > 0) {
+					connectExchange.map((item, i) => {
+						if (item.name == "tokocrypto") {
 							User.findByIdAndUpdate(user._id, {
-								$push: {
-									exchangeConnect: { name: "tokocrypto", key: key },
+								$pull: {
+									exchangeConnect: item,
 								},
-							}).exec((err: any, result: IUser) => {
-								if (result) {
-									return res.status(200).send({ success: true, data: key });
-								}
-								if (err) {
-									return errors.errorHandler(res, err.message, null);
-								}
-							});
+							}).exec();
 						}
-					} else {
-						User.findByIdAndUpdate(user._id, {
-							$push: { exchangeConnect: { name: "tokocrypto", key: key } },
-						}).exec((err: any, result: IUser) => {
-							if (result) {
-								return res.status(200).send({ success: true, data: key });
-							}
-							if (err) {
-								return errors.errorHandler(res, err.message, null);
-							}
-						});
-					}
-				} catch (error: any) {
-					return errors.errorHandler(res, error.message, null);
+					});
+
+					User.findByIdAndUpdate(user._id, {
+						$push: {
+							exchangeConnect: { name: "tokocrypto", key: key },
+						},
+					}).exec((err: any, result: IUser) => {
+						if (result) {
+							return res.status(200).send({ success: true, data: key });
+						}
+						if (err) {
+							return errors.errorHandler(res, err.message, null);
+						}
+					});
+				} else {
+					User.findByIdAndUpdate(user._id, {
+						$push: { exchangeConnect: { name: "tokocrypto", key: key } },
+					}).exec((err: any, result: IUser) => {
+						if (result) {
+							return res.status(200).send({ success: true, data: key });
+						}
+						if (err) {
+							return errors.errorHandler(res, err.message, null);
+						}
+					});
 				}
-			} else {
-				return errors.errorHandler(res, "invalid apiKey and secretKey", null);
+			} catch (error: any) {
+				return errors.errorHandler(res, error.message, null);
 			}
+			// } else {
+			// 	return errors.errorHandler(res, "invalid apiKey and secretKey", null);
+			// }
 		} else {
 			return errors.errorHandler(res, "Exchange not Available", null);
 		}
