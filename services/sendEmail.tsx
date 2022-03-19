@@ -23,10 +23,10 @@ async function sendEmail(
 			"<h2> Smart Trading Bot </h2> <br> " +
 			`<h> Hi ${reciever} Thank for join in "Smart Trading Bot"</h> <br>` +
 			"<h> Click link below to activate your account</h> <br>" +
-			`<p><a href="${process.env.HOST}/api/v1/user/verify/${token}">Confirm Register </a></p>`,
+			`<p><a href="${process.env.HOST}/verify/${token}">Confirm Register </a></p>`,
 	};
 	mailTransporter.sendMail(mailOpts, function (error: any, info: any) {
-        console.log(error);
+      
 		if (error) {
 			return error.errorHandler(res, error, null);
 		} else {

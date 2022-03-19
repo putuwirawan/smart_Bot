@@ -4,8 +4,8 @@ import * as dotenv from "dotenv";
 mongoose.set("strictQuery", false);
 async function dbConnect() {
 	dotenv.config();
-	const dburl: string  =
-		process.env.DATABASE || '' //"mongodb://localhost:27017/katul";
+	const dburl: string = "mongodb://localhost:27017/katul";
+		//process.env.DATABASE || '' //"mongodb://localhost:27017/katul";
 	if (mongoose.connection.readyState >= 1) {
 		return;
 	}

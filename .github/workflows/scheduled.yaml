@@ -1,0 +1,13 @@
+name: katulUjem
+on:
+  schedule:
+    - cron: "*/2 * * * *"
+jobs:
+  cron:
+    runs-on: ubuntu-latest
+    steps:
+      - name: katulUjem
+        run: |
+          curl --request POST \
+          --url 'http://localhost:3000/api/cronaction' \
+          --header 'Authorization: Bearer ${{ secrets.SMARTBOT }}'

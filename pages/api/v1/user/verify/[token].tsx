@@ -18,6 +18,7 @@ export default async function handler(
 	
 	const { token } = req.query;
 	const parseToken = jwt.verify(token, process.env.JWT_SECRET);
+	
 	if (parseToken) {
 		const updateUser = await User.findByIdAndUpdate(parseToken._id, {
 			role: "member",

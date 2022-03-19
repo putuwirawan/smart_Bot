@@ -6,7 +6,7 @@ export const errorHandler = (
 	errorMessage: string,
 	errorCode: string | null
 ) => {
-	if (errorCode === "invalidToken" || errorCode === "refreshExpired") {
+	if (errorCode === "invalidToken" || errorCode === "invalidRole") {
 		return res.status(403).send({
 			success: false,
 			message: errorMessage,
