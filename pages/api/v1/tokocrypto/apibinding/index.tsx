@@ -54,7 +54,7 @@ const handler = async (
 						});
 
 						if (xkey !== "") {
-							User.findOne({ _id: user._id }).then((item) => {
+						await	User.findOne({ _id: user._id }).then((item) => {
 								item.exchangeConnect[index].key = key;
 								item.save();
 							});
