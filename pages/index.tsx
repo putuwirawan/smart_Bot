@@ -14,7 +14,7 @@ const Home: NextPage = (props:any) => {
 			</Head>
 
 			<main className={styles.main}>
-				<h1>kopi gen net</h1>
+			
 				<h1 className={styles.title}>
 					Welcome to <a href="">Smart Trading Bot</a>
 				</h1>

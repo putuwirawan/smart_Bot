@@ -44,24 +44,29 @@ const handler = async (
 				try {
 					let connectExchange = user.exchangeConnect;
 					if (connectExchange && connectExchange.length > 0) {
-						let xkey = "";
-						let index = -1;
+						let keyId = "";
+						let indexExchange = 0;
 						connectExchange.map((item, i) => {
 							if (item.name == "tokocrypto") {
-								xkey = key;
-								index = i;
+								keyId = item._id;
 							}
 						});
-
-						if (xkey !== "") {
-						await	User.findOne({ _id: user._id }).then((item) => {
-								item.exchangeConnect[index].key = key;
-								item.save();
+						if (keyId !== "") {
+							User.updateOne(
+								{ _id: user._id, "exchangeConnect._id": keyId },
+								{
+									$set: {
+										exchangeConnect: { key: key },
+									},
+								}
+							).then(() => {
+								return res.status(200).send({ success: true, data: key });
 							});
-							return res.status(200).send({ success: true, data: key });
 						} else {
 							User.findByIdAndUpdate(user._id, {
-								$push: { exchangeConnect: { name: "tokocrypto", key: key } },
+								$push: {
+									exchangeConnect: { name: "tokocrypto", key: key },
+								},
 							}).exec((err: any, result: IUser) => {
 								if (result) {
 									return res.status(200).send({ success: true, data: key });
