@@ -8,6 +8,8 @@ import ProfitSchema from "./Profit.model";
 import TransactionSchema from "./Transaction.model";
 import CoinInvestSchema from "./CoinInvest.model";
 import OrderSchema from "./Order.model";
+import BalanceSchema from "./Balance.model";
+import RequestOrderSchema from "./RequestOrder.model";
 
 export const User = mongoose.models.User || mongoose.model("User", UserSchema);
 export const Exchange =
@@ -29,3 +31,10 @@ export const Coininvest =
 
 export const Order =
 	mongoose.models.Order || mongoose.model("Order", OrderSchema);
+
+export const Balance =
+	mongoose.models.Balance || mongoose.model("Balance", BalanceSchema);
+
+export const Requestorder =
+	mongoose.models.Requestorder ||
+	mongoose.model("Requestorder", RequestOrderSchema);

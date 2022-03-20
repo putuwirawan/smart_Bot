@@ -3,9 +3,10 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import withProtect from "../../../../../middleware/withProtect";
 import * as errors from "../../../../../helpers/error";
 import dbConnect from "../../../../../db/config/DbConnect";
-import { Setting } from "../../../../../db/models";
+import {
+	Requestorder,
+} from "../../../../../db/models";
 import connectToko from "../../../../../middleware/connectToko";
-import { resetSetting } from "../../../../../services/globalVariable";
 
 type NextApiRequestWithFormData = NextApiRequest &
 	Request & {
@@ -28,44 +29,23 @@ const handler = async (
 ) => {
 	const method = req.method;
 	const { id } = req.query;
-	const body = req.body;
+
 	switch (method) {
-		case "POST": {
+		case "DELETE": {
 			try {
-				const update = resetSetting;
-				const exisSetting = await Setting.findByIdAndUpdate(id, update)
-					.populate("pairId")
-					.exec();
-				return res.status(200).send({ success: true, data: exisSetting });
+				const request = await Requestorder.findByIdAndRemove(id).exec();
+				return res.status(200).send({ success: true, data: request });
 			} catch (error: any) {
 				return errors.errorHandler(res, error.message, null);
 			}
 		}
 		case "GET": {
 			try {
-				const exisSetting = await Setting.findById(id)
+				const request = await Requestorder.findById(id)
+					.populate("exchangeId")
 					.populate("pairId")
 					.exec();
-				return res.status(200).send({ success: true, data: exisSetting });
-			} catch (error: any) {
-				return errors.errorHandler(res, error.message, null);
-			}
-		}
-
-		case "PUT": {
-			try {
-				const exisSetting = await Setting.findByIdAndUpdate(id, body)
-					.populate("pairId")
-					.exec();
-				return res.status(200).send({ success: true, data: exisSetting });
-			} catch (error: any) {
-				return errors.errorHandler(res, error.message, null);
-			}
-		}
-		case "DELETE": {
-			try {
-				const exisSetting = await Setting.findByIdAndDelete(id).exec();
-				return res.status(200).send({ success: true, data: exisSetting });
+				return res.status(200).send({ success: true, data: request });
 			} catch (error: any) {
 				return errors.errorHandler(res, error.message, null);
 			}

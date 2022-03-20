@@ -3,7 +3,8 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import withProtect from "../../../../../middleware/withProtect";
 import * as errors from "../../../../../helpers/error";
 import dbConnect from "../../../../../db/config/DbConnect";
-import { Setting } from "../../../../../db/models";
+import { Coininvest, Exchange, Setting, Transaction } from "../../../../../db/models";
+import { NewSetting } from "../../../../../services/newSetting";
 import connectToko from "../../../../../middleware/connectToko";
 import { resetSetting } from "../../../../../services/globalVariable";
 
@@ -28,44 +29,15 @@ const handler = async (
 ) => {
 	const method = req.method;
 	const { id } = req.query;
-	const body = req.body;
+
 	switch (method) {
-		case "POST": {
-			try {
-				const update = resetSetting;
-				const exisSetting = await Setting.findByIdAndUpdate(id, update)
-					.populate("pairId")
-					.exec();
-				return res.status(200).send({ success: true, data: exisSetting });
-			} catch (error: any) {
-				return errors.errorHandler(res, error.message, null);
-			}
-		}
 		case "GET": {
 			try {
-				const exisSetting = await Setting.findById(id)
+				const detail = await Coininvest.findById(id)
+					.populate("exchangeId")
 					.populate("pairId")
 					.exec();
-				return res.status(200).send({ success: true, data: exisSetting });
-			} catch (error: any) {
-				return errors.errorHandler(res, error.message, null);
-			}
-		}
-
-		case "PUT": {
-			try {
-				const exisSetting = await Setting.findByIdAndUpdate(id, body)
-					.populate("pairId")
-					.exec();
-				return res.status(200).send({ success: true, data: exisSetting });
-			} catch (error: any) {
-				return errors.errorHandler(res, error.message, null);
-			}
-		}
-		case "DELETE": {
-			try {
-				const exisSetting = await Setting.findByIdAndDelete(id).exec();
-				return res.status(200).send({ success: true, data: exisSetting });
+				return res.status(200).send({ success: true, data: detail });
 			} catch (error: any) {
 				return errors.errorHandler(res, error.message, null);
 			}

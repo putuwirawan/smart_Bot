@@ -4,9 +4,9 @@ import withProtect from "../../../../../middleware/withProtect";
 import * as errors from "../../../../../helpers/error";
 import dbConnect from "../../../../../db/config/DbConnect";
 import { Balance } from "../../../../../db/models";
-import connectToko from "../../../../../middleware/connectToko";
 import { IExchange } from "../../../../../types/Exchange.type";
 import { IUser } from "../../../../../types/user.type";
+import connectBinance from "../../../../../middleware/connectBinance";
 
 type NextApiRequestWithFormData = NextApiRequest &
 	Request & {
@@ -40,7 +40,7 @@ const handler = async (
 					if (balance) {
 						return res
 							.status(200)
-							.send({ success: true, data: balance.balances.tokocrypto });
+							.send({ success: true, data: balance.balances.binance });
 					} else {
 						return res
 							.status(200)
@@ -58,4 +58,4 @@ const handler = async (
 		return errors.errorHandler(res, "Exchange not Available", null);
 	}
 };
-export default withProtect(connectToko(handler));
+export default withProtect(connectBinance(handler));

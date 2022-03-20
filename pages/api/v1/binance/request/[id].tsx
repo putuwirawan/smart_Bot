@@ -3,8 +3,10 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import withProtect from "../../../../../middleware/withProtect";
 import * as errors from "../../../../../helpers/error";
 import dbConnect from "../../../../../db/config/DbConnect";
-import { Transaction } from "../../../../../db/models";
-import connectToko from "../../../../../middleware/connectToko";
+import {
+	Requestorder,
+} from "../../../../../db/models";
+import connectBinance from "../../../../../middleware/connectBinance";
 
 type NextApiRequestWithFormData = NextApiRequest &
 	Request & {
@@ -29,13 +31,21 @@ const handler = async (
 	const { id } = req.query;
 
 	switch (method) {
+		case "DELETE": {
+			try {
+				const request = await Requestorder.findByIdAndRemove(id).exec();
+				return res.status(200).send({ success: true, data: request });
+			} catch (error: any) {
+				return errors.errorHandler(res, error.message, null);
+			}
+		}
 		case "GET": {
 			try {
-				const exisSetting = await Transaction.findById(id)
+				const request = await Requestorder.findById(id)
 					.populate("exchangeId")
-					.populate({ path: "settingId", populate: { path: "pairId" } })
+					.populate("pairId")
 					.exec();
-				return res.status(200).send({ success: true, data: exisSetting });
+				return res.status(200).send({ success: true, data: request });
 			} catch (error: any) {
 				return errors.errorHandler(res, error.message, null);
 			}
@@ -45,4 +55,4 @@ const handler = async (
 			return errors.errorHandler(res, "method not allowed", null);
 	}
 };
-export default withProtect(connectToko(handler));
+export default withProtect(connectBinance(handler));

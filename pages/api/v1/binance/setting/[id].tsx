@@ -4,8 +4,8 @@ import withProtect from "../../../../../middleware/withProtect";
 import * as errors from "../../../../../helpers/error";
 import dbConnect from "../../../../../db/config/DbConnect";
 import { Setting } from "../../../../../db/models";
-import connectToko from "../../../../../middleware/connectToko";
 import { resetSetting } from "../../../../../services/globalVariable";
+import connectBinance from "../../../../../middleware/connectBinance";
 
 type NextApiRequestWithFormData = NextApiRequest &
 	Request & {
@@ -75,4 +75,4 @@ const handler = async (
 			return errors.errorHandler(res, "method not allowed", null);
 	}
 };
-export default withProtect(connectToko(handler));
+export default withProtect(connectBinance(handler));

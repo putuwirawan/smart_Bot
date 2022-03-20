@@ -27,7 +27,7 @@ const handler = async (
 	const user = req.user;
 	const method = req.method;
 	const body = req.body;
-	const exchange = await Exchange.findOne({ code: "tokocrypto" });
+	const exchange = await Exchange.findOne({ code: "binance" });
 	// to connecting your api require apiKey and secretKey on body
 	if (method == "POST") {
 		if (exchange) {
@@ -45,7 +45,7 @@ const handler = async (
 
 				if (connectExchange && connectExchange.length > 0) {
 					connectExchange.map((item, i) => {
-						if (item.name == "tokocrypto") {
+						if (item.name == "binance") {
 							User.findByIdAndUpdate(user._id, {
 								$pull: {
 									exchangeConnect: item,
@@ -56,7 +56,7 @@ const handler = async (
 
 					User.findByIdAndUpdate(user._id, {
 						$push: {
-							exchangeConnect: { name: "tokocrypto", key: key },
+							exchangeConnect: { name: "binance", key: key },
 						},
 					}).exec((err: any, result: IUser) => {
 						if (result) {
@@ -68,7 +68,7 @@ const handler = async (
 					});
 				} else {
 					User.findByIdAndUpdate(user._id, {
-						$push: { exchangeConnect: { name: "tokocrypto", key: key } },
+						$push: { exchangeConnect: { name: "binance", key: key } },
 					}).exec((err: any, result: IUser) => {
 						if (result) {
 							return res.status(200).send({ success: true, data: key });

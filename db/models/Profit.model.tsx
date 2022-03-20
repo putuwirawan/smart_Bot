@@ -5,19 +5,11 @@ const ProfitSchema = new Schema(
 	{
 		userId: { type: Schema.Types.ObjectId, ref: "User" },
 		exchangeId: { type: Schema.Types.ObjectId, ref: "Exchange" },
-		profits: { type: String },
-		transaction: [
-			{
-				name: { type: String },
-				value: { type: String },
-				time: {
-					type: String,
-					default: new Date(Date.now()).toLocaleTimeString(),
-				},
-			},
-		],
+		profit: { type: String },
+		pairname: { type: String },
+		datetime: { type: Number },
 		date: {
-			type: String,
+			type: Date,
 			required: true,
 			default: new Date(Date.now()).toLocaleDateString(),
 		},

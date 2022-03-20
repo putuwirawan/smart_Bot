@@ -34,13 +34,22 @@ const handler = async (
 		switch (method) {
 			case "GET": {
 				try {
-					const report = await Profit.find({
-						userId: user._id,
-						exchangeId: exchange._id,
-					})
-						.populate("exchangeId")
-						.exec();
-					return res.status(200).send({ success: true, data: report });
+					const profits = await Profit.aggregate([
+						{ $match: { userId: user._id, exchangeId: exchange._id } },
+						{
+							$group: {
+								_id: "$date",
+								detail: {
+									$push: {
+										pairname: "$pairname",
+										profit: "$profit",
+										datetime: "$datetime",
+									},
+								},
+							},
+						},
+					]);
+					return res.status(200).send({ success: true, data: profits });
 				} catch (error: any) {
 					return errors.errorHandler(res, error.message, null);
 				}

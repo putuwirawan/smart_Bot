@@ -3,10 +3,10 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import withProtect from "../../../../../middleware/withProtect";
 import * as errors from "../../../../../helpers/error";
 import dbConnect from "../../../../../db/config/DbConnect";
-import { Balance } from "../../../../../db/models";
-import connectToko from "../../../../../middleware/connectToko";
+import { Report } from "../../../../../db/models";
 import { IExchange } from "../../../../../types/Exchange.type";
 import { IUser } from "../../../../../types/user.type";
+import connectBinance from "../../../../../middleware/connectBinance";
 
 type NextApiRequestWithFormData = NextApiRequest &
 	Request & {
@@ -34,18 +34,28 @@ const handler = async (
 		switch (method) {
 			case "GET": {
 				try {
-					const balance = await Balance.findOne({
+					const report = await Report.find({
 						userId: user._id,
-					}).exec();
-					if (balance) {
-						return res
-							.status(200)
-							.send({ success: true, data: balance.balances.tokocrypto });
-					} else {
-						return res
-							.status(200)
-							.send({ success: true, data: { USDT: "", BIDR: "" } });
-					}
+						exchangeId: exchange._id,
+					})
+						.populate("exchangeId")
+						.sort({ createdAt :-1})
+						.exec();
+					return res.status(200).send({ success: true, data: report });
+				} catch (error: any) {
+					return errors.errorHandler(res, error.message, null);
+				}
+			}
+
+			case "DELETE": {
+				try {
+					const report = await Report.deleteMany({
+						userId: user._id,
+						exchangeId: exchange._id,
+					})
+						.populate("exchangeId")
+						.exec();
+					return res.status(200).send({ success: true, data: report });
 				} catch (error: any) {
 					return errors.errorHandler(res, error.message, null);
 				}
@@ -58,4 +68,4 @@ const handler = async (
 		return errors.errorHandler(res, "Exchange not Available", null);
 	}
 };
-export default withProtect(connectToko(handler));
+export default withProtect(connectBinance(handler));

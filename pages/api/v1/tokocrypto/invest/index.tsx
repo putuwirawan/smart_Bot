@@ -3,7 +3,12 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import withProtect from "../../../../../middleware/withProtect";
 import * as errors from "../../../../../helpers/error";
 import dbConnect from "../../../../../db/config/DbConnect";
-import { Balance } from "../../../../../db/models";
+import {
+	Balance,
+	Coininvest,
+	Exchange,
+	Profit,
+} from "../../../../../db/models";
 import connectToko from "../../../../../middleware/connectToko";
 import { IExchange } from "../../../../../types/Exchange.type";
 import { IUser } from "../../../../../types/user.type";
@@ -34,18 +39,41 @@ const handler = async (
 		switch (method) {
 			case "GET": {
 				try {
-					const balance = await Balance.findOne({
-						userId: user._id,
-					}).exec();
-					if (balance) {
-						return res
-							.status(200)
-							.send({ success: true, data: balance.balances.tokocrypto });
-					} else {
-						return res
-							.status(200)
-							.send({ success: true, data: { USDT: "", BIDR: "" } });
-					}
+					const invest = await Coininvest.aggregate([
+						{ $match: { userId: user._id, exchangeId: exchange._id } },
+						{
+							$group: {
+								_id: "$pairId",
+								userId: { $first: "$userId" },
+								exchangeId: { $first: "$exchangeId" },
+								orders: {
+									$push: {
+										order: "$order",
+										_id: "$_id",
+										createdAt: "$createdAt",
+									},
+								},
+							},
+						},
+						{
+							$lookup: {
+								from: "pairs",
+								localField: "_id",
+								foreignField: "_id",
+								as: "pairId",
+							},
+						},
+						{
+							$lookup: {
+								from: "exchanges",
+								localField: "exchangeId",
+								foreignField: "_id",
+								as: "exchangeId",
+							},
+						},
+					]);
+
+					return res.status(200).send({ success: true, data: invest });
 				} catch (error: any) {
 					return errors.errorHandler(res, error.message, null);
 				}

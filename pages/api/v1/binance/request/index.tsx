@@ -3,10 +3,11 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import withProtect from "../../../../../middleware/withProtect";
 import * as errors from "../../../../../helpers/error";
 import dbConnect from "../../../../../db/config/DbConnect";
-import { Report } from "../../../../../db/models";
-import connectToko from "../../../../../middleware/connectToko";
+import { Requestorder } from "../../../../../db/models";
 import { IExchange } from "../../../../../types/Exchange.type";
 import { IUser } from "../../../../../types/user.type";
+import { IOrder } from "../../../../../types/Order.type";
+import connectBinance from "../../../../../middleware/connectBinance";
 
 type NextApiRequestWithFormData = NextApiRequest &
 	Request & {
@@ -21,6 +22,7 @@ type DataResfonse = {
 	success: boolean;
 	message?: string;
 	data?: any;
+	code?: string;
 };
 dbConnect();
 const handler = async (
@@ -30,42 +32,52 @@ const handler = async (
 	const user = req.user;
 	const method = req.method;
 	const exchange = req.exchange;
+
 	if (exchange) {
 		switch (method) {
 			case "GET": {
+				const requestOrder = await Requestorder.find({
+					userId: user._id,
+					exchangeId: exchange._id,
+				})
+					.populate("exchangeId")
+					.populate("pairId")
+					.sort({ createdAt: -1 })
+					.exec();
+
+				return res.status(200).send({ success: true, data: requestOrder });
+			}
+			case "POST": {
+				let body: IOrder = req.body;
+				body.userId = user._id;
+				body.exchangeId = exchange._id;
 				try {
-					const report = await Report.find({
-						userId: user._id,
-						exchangeId: exchange._id,
-					})
-						.populate("exchangeId")
-						.sort({ createdAt :-1})
-						.exec();
-					return res.status(200).send({ success: true, data: report });
+					const newOrder = new Requestorder(body);
+
+					const order = await newOrder.save();
+					return res.status(200).send({ success: true, data: order });
 				} catch (error: any) {
 					return errors.errorHandler(res, error.message, null);
 				}
 			}
-
 			case "DELETE": {
 				try {
-					const report = await Report.deleteMany({
+					const deletedOrder = await Requestorder.deleteMany({
 						userId: user._id,
 						exchangeId: exchange._id,
-					})
-						.populate("exchangeId")
-						.exec();
-					return res.status(200).send({ success: true, data: report });
+					}).exec();
+
+					return res.status(200).send({ success: true, data: deletedOrder });
 				} catch (error: any) {
 					return errors.errorHandler(res, error.message, null);
 				}
 			}
 
 			default:
-				return errors.errorHandler(res, "req_method_not_supported", null);
+				return errors.errorHandler(res, "method not allowed", null);
 		}
 	} else {
-		return errors.errorHandler(res, "Exchange not Available", null);
+		return errors.errorHandler(res, "no available data Exchange", null);
 	}
 };
-export default withProtect(connectToko(handler));
+export default withProtect(connectBinance(handler));
