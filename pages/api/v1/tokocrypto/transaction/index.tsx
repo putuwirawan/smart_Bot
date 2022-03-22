@@ -1,4 +1,3 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import withProtect from "../../../../../middleware/withProtect";
 import * as errors from "../../../../../helpers/error";
@@ -33,8 +32,7 @@ const handler = async (
 	const exchange = req.exchange;
 
 	if (exchange) {
-		switch (method) {	
-
+		switch (method) {
 			case "GET": {
 				const transactions = await Transaction.find({
 					userId: user._id,

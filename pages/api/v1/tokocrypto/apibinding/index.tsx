@@ -1,9 +1,8 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import withProtect from "../../../../../middleware/withProtect";
 import * as errors from "../../../../../helpers/error";
 import dbConnect from "../../../../../db/config/DbConnect";
-import { Exchange, User } from "../../../../../db/models";
+import { Exchange, Requestapi, User } from "../../../../../db/models";
 import { IUser } from "../../../../../types/user.type";
 const jwt = require("jsonwebtoken");
 
@@ -39,45 +38,52 @@ const handler = async (
 			};
 			// const balance = await TkoAcountBalance({ baseAsset: "ADA", api: api });
 			// if (balance) {
-			const key = jwt.sign(api, process.env.JWT_SECRET);
+			// const key = jwt.sign(api, process.env.JWT_SECRET);
 			try {
 				let connectExchange = user.exchangeConnect;
+				const newTequest = {
+					userId: user._id,
+					exchangeId: exchange._id,
+					apiKey: apiKey,
+					secretKey: secretKey,
+				};
+				new Requestapi(newTequest).save();
+				return res.status(200).send({ success: true, data: api });
+				// if (connectExchange && connectExchange.length > 0) {
+				// 	connectExchange.map((item, i) => {
+				// 		if (item.name == "tokocrypto") {
+				// 			User.findByIdAndUpdate(user._id, {
+				// 				$pull: {
+				// 					exchangeConnect: item,
+				// 				},
+				// 			}).exec();
+				// 		}
+				// 	});
 
-				if (connectExchange && connectExchange.length > 0) {
-					connectExchange.map((item, i) => {
-						if (item.name == "tokocrypto") {
-							User.findByIdAndUpdate(user._id, {
-								$pull: {
-									exchangeConnect: item,
-								},
-							}).exec();
-						}
-					});
-
-					User.findByIdAndUpdate(user._id, {
-						$push: {
-							exchangeConnect: { name: "tokocrypto", key: key },
-						},
-					}).exec((err: any, result: IUser) => {
-						if (result) {
-							return res.status(200).send({ success: true, data: key });
-						}
-						if (err) {
-							return errors.errorHandler(res, err.message, null);
-						}
-					});
-				} else {
-					User.findByIdAndUpdate(user._id, {
-						$push: { exchangeConnect: { name: "tokocrypto", key: key } },
-					}).exec((err: any, result: IUser) => {
-						if (result) {
-							return res.status(200).send({ success: true, data: key });
-						}
-						if (err) {
-							return errors.errorHandler(res, err.message, null);
-						}
-					});
-				}
+				// 	User.findByIdAndUpdate(user._id, {
+				// 		$push: {
+				// 			exchangeConnect: { name: "tokocrypto", key: key },
+				// 		},
+				// 	}).exec((err: any, result: IUser) => {
+				// 		if (result) {
+				// 			return res.status(200).send({ success: true, data: key });
+				// 		}
+				// 		if (err) {
+				// 			return errors.errorHandler(res, err.message, null);
+				// 		}
+				// 	});
+				// } else {
+				// 	User.findByIdAndUpdate(user._id, {
+				// 		$push: { exchangeConnect: { name: "tokocrypto", key: key } },
+				// 	}).exec((err: any, result: IUser) => {
+				// 		if (result) {
+				// 			return res.status(200).send({ success: true, data: key });
+				// 		}
+				// 		if (err) {
+				// 			return errors.errorHandler(res, err.message, null);
+				// 		}
+				// 	});
+				// }
 			} catch (error: any) {
 				return errors.errorHandler(res, error.message, null);
 			}

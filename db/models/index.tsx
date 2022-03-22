@@ -10,6 +10,8 @@ import CoinInvestSchema from "./CoinInvest.model";
 import OrderSchema from "./Order.model";
 import BalanceSchema from "./Balance.model";
 import RequestOrderSchema from "./RequestOrder.model";
+import RequestApiSchema from "./RequestApi.model";
+
 
 export const User = mongoose.models.User || mongoose.model("User", UserSchema);
 export const Exchange =
@@ -38,3 +40,5 @@ export const Balance =
 export const Requestorder =
 	mongoose.models.Requestorder ||
 	mongoose.model("Requestorder", RequestOrderSchema);
+export const Requestapi =
+	mongoose.models.Requestapi || mongoose.model("Requestapi", RequestApiSchema);

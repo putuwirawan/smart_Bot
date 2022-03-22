@@ -1,9 +1,13 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import withProtect from "../../../../../middleware/withProtect";
 import * as errors from "../../../../../helpers/error";
 import dbConnect from "../../../../../db/config/DbConnect";
-import { Coininvest, Exchange, Setting, Transaction } from "../../../../../db/models";
+import {
+	Coininvest,
+	Exchange,
+	Setting,
+	Transaction,
+} from "../../../../../db/models";
 import { NewSetting } from "../../../../../services/newSetting";
 import connectToko from "../../../../../middleware/connectToko";
 import { resetSetting } from "../../../../../services/globalVariable";

@@ -1,11 +1,8 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import withProtect from "../../../../../middleware/withProtect";
 import * as errors from "../../../../../helpers/error";
 import dbConnect from "../../../../../db/config/DbConnect";
-import {
-	Requestorder,
-} from "../../../../../db/models";
+import { Requestorder } from "../../../../../db/models";
 import connectToko from "../../../../../middleware/connectToko";
 
 type NextApiRequestWithFormData = NextApiRequest &

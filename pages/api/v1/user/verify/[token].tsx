@@ -1,4 +1,3 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import * as errors from "../../../../../helpers/error";
 import dbConnect from "../../../../../db/config/DbConnect";
@@ -15,10 +14,9 @@ export default async function handler(
 	req: NextApiRequest,
 	res: NextApiResponse<Data>
 ) {
-	
 	const { token } = req.query;
 	const parseToken = jwt.verify(token, process.env.JWT_SECRET);
-	
+
 	if (parseToken) {
 		const updateUser = await User.findByIdAndUpdate(parseToken._id, {
 			role: "member",

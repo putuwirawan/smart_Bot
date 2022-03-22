@@ -1,4 +1,3 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import withProtect from "../../../../../middleware/withProtect";
 import * as errors from "../../../../../helpers/error";
@@ -39,7 +38,7 @@ const handler = async (
 			case "POST":
 				{
 					const pairId = req.body.pairId;
-					if (!pairId ) {
+					if (!pairId) {
 						return errors.errorHandler(res, "Select valid Pair", null);
 					}
 					const exisSetting = await Setting.findOne({
@@ -65,7 +64,6 @@ const handler = async (
 				}
 				break;
 			case "GET": {
-	
 				let xx = [];
 				const transactions = await Transaction.find({
 					userId: user._id,

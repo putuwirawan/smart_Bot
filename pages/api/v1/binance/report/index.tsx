@@ -1,4 +1,3 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import withProtect from "../../../../../middleware/withProtect";
 import * as errors from "../../../../../helpers/error";
@@ -39,7 +38,7 @@ const handler = async (
 						exchangeId: exchange._id,
 					})
 						.populate("exchangeId")
-						.sort({ createdAt :-1})
+						.sort({ createdAt: -1 })
 						.exec();
 					return res.status(200).send({ success: true, data: report });
 				} catch (error: any) {

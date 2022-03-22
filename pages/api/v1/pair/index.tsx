@@ -1,4 +1,3 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import { Pair } from "../../../../db/models";
 import dbConnect from "../../../../db/config/DbConnect";

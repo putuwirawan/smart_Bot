@@ -7,7 +7,7 @@ const ProfitSchema = new Schema(
 		exchangeId: { type: Schema.Types.ObjectId, ref: "Exchange" },
 		profit: { type: String },
 		pairname: { type: String },
-		datetime: { type: Number },
+		datetime: { type: Number, default: new Date(Date.now()) },
 		date: {
 			type: Date,
 			required: true,
