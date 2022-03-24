@@ -7,14 +7,16 @@ import sendEmail from "../../../../services/sendEmail";
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-type Data = {
-	name: string;
+type DataResfonse = {
+	success: boolean;
+	message?: string;
+	data?: any;
 };
 
 dbConnect();
 export default async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse<Data>
+	res: NextApiResponse<DataResfonse>
 ) {
 	const method = req.method;
 	const { email, password } = req.body;
@@ -47,7 +49,13 @@ export default async function handler(
 				);
 
 				if (usercreated) {
-					sendEmail(res, email, token);
+					//sendEmail(res, email, token);
+					return res
+						.status(200)
+						.send({
+							success: true,
+							message: "contact your admin to activated your account",
+						});
 				}
 			} catch (error: any) {
 				return errors.errorHandler(res, error.message, null);
