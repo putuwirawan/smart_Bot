@@ -26,7 +26,10 @@ export default async function handler(
 	}
 
 	if (email && password) {
-		const getUser: IUser = await User.findOne({ email }).exec();
+		const getUser: IUser = await User.findOne({
+			email: email,
+			role: { $nin: ["new"] },
+		}).exec();
 		if (!getUser) {
 			return errors.errorHandler(res, "please register your account", null);
 		} else {
