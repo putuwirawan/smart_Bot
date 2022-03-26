@@ -47,7 +47,7 @@ const handler = async (
 						pairId: pairId,
 					});
 					if (exisSetting) {
-						return res.status(200).send({ success: true, data: exisSetting });
+						return errors.errorHandler(res, `Setting Already Exist`, null);
 					} else {
 						let newSetting = NewSetting(pairId, user._id, exchange._id);
 						newSetting.firstBuy = "12";

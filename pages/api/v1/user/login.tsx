@@ -29,6 +29,7 @@ export default async function handler(
 		const getUser: IUser = await User.findOne({
 			email: email,
 			role: { $nin: ["new"] },
+			active:true
 		}).exec();
 		if (!getUser) {
 			return errors.errorHandler(res, "please register your account", null);

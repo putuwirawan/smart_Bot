@@ -18,7 +18,7 @@ type DataResfonse = {
 	data?: any;
 };
 dbConnect();
-const handler = (
+const handler = async (
 	req: NextApiRequestWithFormData,
 	res: NextApiResponse<DataResfonse>
 ) => {
@@ -27,33 +27,42 @@ const handler = (
 		const symbol: string = req.body.symbol;
 
 		try {
-			PairInfo(symbol.toUpperCase())
-				.then((info) => {
-					if (info) {
-						const _newPair: IPair = {
-							symbol: info.symbol,
-							baseAsset: info.baseAsset,
-							quoteAsset: info.quoteAsset,
-							minOrder: info.minOrder.toString(),
-							minQty: info.minQty.toString(),
-							url: `/crypto/${info.baseAsset}.png`,
-						};
-						const newPair = new Pair(_newPair);
-						newPair.save((err: any, result: IPair) => {
-							if (result) {
-								return res.status(200).send({ success: true, data: result });
-							}
-							if (err) {
-								return errors.errorHandler(res, err.message, null);
-							}
-						});
-					} else {
-						return errors.errorHandler(res, "invalid pair symbol", null);
-					}
-				})
-				.catch((err: any) => {
-					return errors.errorHandler(res, err.message, null);
-				});
+			const exisPair = await Pair.findOne({ symbol: symbol });
+			if (exisPair) {
+				return errors.errorHandler(
+					res,
+					`${symbol.toUpperCase()} Already Exist`,
+					null
+				);
+			} else {
+				PairInfo(symbol.toUpperCase())
+					.then((info) => {
+						if (info) {
+							const _newPair: IPair = {
+								symbol: info.symbol,
+								baseAsset: info.baseAsset,
+								quoteAsset: info.quoteAsset,
+								minOrder: info.minOrder.toString(),
+								minQty: info.minQty.toString(),
+								url: `/crypto/${info.baseAsset}.png`,
+							};
+							const newPair = new Pair(_newPair);
+							newPair.save((err: any, result: IPair) => {
+								if (result) {
+									return res.status(200).send({ success: true, data: result });
+								}
+								if (err) {
+									return errors.errorHandler(res, err.message, null);
+								}
+							});
+						} else {
+							return errors.errorHandler(res, "invalid pair symbol", null);
+						}
+					})
+					.catch((err: any) => {
+						return errors.errorHandler(res, err.message, null);
+					});
+			}
 		} catch (error: any) {
 			return errors.errorHandler(res, error.message, null);
 		}

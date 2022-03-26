@@ -36,6 +36,7 @@ const handler = async (
 					const report = await Report.find({
 						userId: user._id,
 						exchangeId: exchange._id,
+						isRead: false,
 					})
 						.populate("exchangeId")
 						.sort({ createdAt: -1 })
@@ -45,7 +46,24 @@ const handler = async (
 					return errors.errorHandler(res, error.message, null);
 				}
 			}
-
+			case "PUT": {
+				try {
+					const report = await Report.updateMany(
+						{
+							userId: user._id,
+							exchangeId: exchange._id,
+							isread: false,
+						},
+						{ isread: true }
+					)
+						.populate("exchangeId")
+						.sort({ createdAt: -1 })
+						.exec();
+					return res.status(200).send({ success: true, data: report });
+				} catch (error: any) {
+					return errors.errorHandler(res, error.message, null);
+				}
+			}
 			case "DELETE": {
 				try {
 					const report = await Report.deleteMany({
