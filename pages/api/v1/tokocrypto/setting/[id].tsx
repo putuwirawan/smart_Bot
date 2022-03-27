@@ -57,22 +57,16 @@ const handler = async (
 				const exisSetting = await Setting.findByIdAndUpdate(id, body, {
 					new: true,
 					upsert: true,
-				}).exec();
-				const xx = await Setting.findByIdAndUpdate(
-					id,
-					{
-						$set: {
+				}).exec((err, rsl) => {
+					if (rsl)
+						Setting.findByIdAndUpdate(rsl._id, {
 							marginConfig: body.marginConfig,
 							profitDistribution: body.profitDistribution,
 							movingAverage: body.movingAverage,
-						},
-					},
-					{
-						new: true,
-						upsert: true,
-					}
-				).exec();
-				return res.status(200).send({ success: true, data: xx });
+						}).exec();
+				});
+
+				return res.status(200).send({ success: true, data: exisSetting });
 			} catch (error: any) {
 				return errors.errorHandler(res, error.message, null);
 			}
