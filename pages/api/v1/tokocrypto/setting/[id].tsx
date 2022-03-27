@@ -5,6 +5,7 @@ import dbConnect from "../../../../../db/config/DbConnect";
 import { Setting } from "../../../../../db/models";
 import connectToko from "../../../../../middleware/connectToko";
 import { resetSetting } from "../../../../../services/globalVariable";
+import { brotliDecompressSync } from "zlib";
 
 type NextApiRequestWithFormData = NextApiRequest &
 	Request & {
@@ -56,10 +57,22 @@ const handler = async (
 				const exisSetting = await Setting.findByIdAndUpdate(id, body, {
 					new: true,
 					upsert: true,
-				})
-					.populate("pairId")
-					.exec();
-				return res.status(200).send({ success: true, data: exisSetting });
+				}).exec();
+				const xx = await Setting.findByIdAndUpdate(
+					id,
+					{
+						$set: {
+							marginConfig: body.marginConfig,
+							profitDistribution: body.profitDistribution,
+							movingAverage: body.movingAverage,
+						},
+					},
+					{
+						new: true,
+						upsert: true,
+					}
+				).exec();
+				return res.status(200).send({ success: true, data: xx });
 			} catch (error: any) {
 				return errors.errorHandler(res, error.message, null);
 			}
