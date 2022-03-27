@@ -40,7 +40,7 @@ const SettingSchema = new Schema(
 		},
 		tradeType: {
 			type: String,
-			enum: ["BarBar", "Aggressive", "Conservative"],
+			enum: ["BarBar", "Normal", "Aggressive", "Conservative"],
 			default: "Conservative",
 		},
 		timeFrame: {
@@ -58,6 +58,5 @@ const SettingSchema = new Schema(
 		timestamps: true,
 	}
 );
-
 
 export default SettingSchema;

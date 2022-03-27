@@ -50,7 +50,7 @@ const handler = async (
 						return res.status(200).send({ success: true, data: exisSetting });
 					} else {
 						let newSetting = NewSetting(pairId, user._id, exchange._id);
-						newSetting.firstBuy = "12";
+						newSetting.firstBuy = "50000";
 						const createSetting = new Setting(newSetting);
 						createSetting.save((err: any, result: any) => {
 							if (result) {

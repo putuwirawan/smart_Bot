@@ -53,7 +53,10 @@ const handler = async (
 
 		case "PUT": {
 			try {
-				const exisSetting = await Setting.findByIdAndUpdate(id, body)
+				const exisSetting = await Setting.findByIdAndUpdate(id, body, {
+					new: true,
+					upsert: true,
+				})
 					.populate("pairId")
 					.exec();
 				return res.status(200).send({ success: true, data: exisSetting });
