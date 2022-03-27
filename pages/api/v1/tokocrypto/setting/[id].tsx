@@ -29,6 +29,7 @@ const handler = async (
 	const method = req.method;
 	const { id } = req.query;
 	const body = req.body;
+
 	switch (method) {
 		case "POST": {
 			try {
@@ -54,18 +55,8 @@ const handler = async (
 
 		case "PUT": {
 			try {
-				const exisSetting = await Setting.findByIdAndUpdate(id, body, {
-					new: true,
-					upsert: true,
-				}).exec((err, rsl) => {
-					if (rsl)
-						Setting.findByIdAndUpdate(rsl._id, {
-							marginConfig: body.marginConfig,
-							profitDistribution: body.profitDistribution,
-							movingAverage: body.movingAverage,
-						}).exec();
-				});
-
+				const exisSetting = await Setting.findByIdAndUpdate(id, body).exec();
+			
 				return res.status(200).send({ success: true, data: exisSetting });
 			} catch (error: any) {
 				return errors.errorHandler(res, error.message, null);
