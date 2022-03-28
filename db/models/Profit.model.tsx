@@ -11,7 +11,7 @@ const ProfitSchema = new Schema(
 		date: {
 			type: Date,
 			required: true,
-			default: new Date(Date.now()).toLocaleDateString(),
+			default: new Date(Date.now()).getDate(),
 		},
 	},
 	{

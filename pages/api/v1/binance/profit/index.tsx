@@ -29,6 +29,7 @@ const handler = async (
 	const user = req.user;
 	const method = req.method;
 	const exchange = req.exchange;
+	const body = req.body;
 	if (exchange) {
 		switch (method) {
 			case "GET": {
@@ -37,7 +38,9 @@ const handler = async (
 						{ $match: { userId: user._id, exchangeId: exchange._id } },
 						{
 							$group: {
-								_id: "$date",
+								_id: {
+									$dateToString: { format: "%Y-%m-%d", date: "$createdAt" },
+								},
 								detail: {
 									$push: {
 										pairname: "$pairname",
@@ -49,6 +52,20 @@ const handler = async (
 						},
 					]);
 					return res.status(200).send({ success: true, data: profits });
+				} catch (error: any) {
+					return errors.errorHandler(res, error.message, null);
+				}
+			}
+			case "POST": {
+				const newProfit = {
+					userId: user._id,
+					exchangeId: exchange._id,
+					profit: body.profit,
+					pairname: body.pairname,
+				};
+				try {
+					const profit = await new Profit(newProfit).save();
+					return res.status(200).send({ success: true, data: profit });
 				} catch (error: any) {
 					return errors.errorHandler(res, error.message, null);
 				}
