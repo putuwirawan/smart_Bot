@@ -29,6 +29,7 @@ const handler = async (
 	const user = req.user;
 	const method = req.method;
 	const exchange = req.exchange;
+	const body = req.body;
 	if (exchange) {
 		switch (method) {
 			case "GET": {
@@ -42,6 +43,19 @@ const handler = async (
 						.sort({ createdAt: -1 })
 						.exec();
 					return res.status(200).send({ success: true, data: report });
+				} catch (error: any) {
+					return errors.errorHandler(res, error.message, null);
+				}
+			}
+			case "POST": {
+				try {
+					const Nreport = await new Report({
+						userId: user._id,
+						exchangeId: exchange._id,
+						message: body.message,
+					}).save();
+
+					return res.status(200).send({ success: true, data: Nreport });
 				} catch (error: any) {
 					return errors.errorHandler(res, error.message, null);
 				}

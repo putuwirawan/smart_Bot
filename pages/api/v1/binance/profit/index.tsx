@@ -49,6 +49,7 @@ const handler = async (
 									},
 								},
 							},
+							$sort: { _id: -1 },
 						},
 					]);
 					return res.status(200).send({ success: true, data: profits });
