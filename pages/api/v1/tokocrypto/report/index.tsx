@@ -63,7 +63,15 @@ const handler = async (
 
 			case "PUT": {
 				try {
-					const report = await Report.updateMany(
+					const xreport = await Report.find({
+						userId: user._id,
+						exchangeId: exchange._id,
+						isread: false,
+					})
+						.populate("exchangeId")
+						.sort({ createdAt: -1 })
+						.exec();
+					Report.updateMany(
 						{
 							userId: user._id,
 							exchangeId: exchange._id,
@@ -74,7 +82,7 @@ const handler = async (
 						.populate("exchangeId")
 						.sort({ createdAt: -1 })
 						.exec();
-					return res.status(200).send({ success: true, data: report });
+					return res.status(200).send({ success: true, data: xreport });
 				} catch (error: any) {
 					return errors.errorHandler(res, error.message, null);
 				}
