@@ -31,7 +31,9 @@ const handler = async (
 	const exchange = req.exchange;
 	const body = req.body;
 	if (exchange) {
+		console.log(exchange);
 		switch (method) {
+			
 			case "GET": {
 				try {
 					const profits = await Profit.aggregate([
@@ -49,9 +51,10 @@ const handler = async (
 									},
 								},
 							},
-							$sort: { _id: -1 },
+							
 						},
 					]);
+					console.log(profits);
 					return res.status(200).send({ success: true, data: profits });
 				} catch (error: any) {
 					return errors.errorHandler(res, error.message, null);

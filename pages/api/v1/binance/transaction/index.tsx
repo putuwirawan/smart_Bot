@@ -30,7 +30,7 @@ const handler = async (
 	const user = req.user;
 	const method = req.method;
 	const exchange = req.exchange;
-
+	const body = req.body;
 	if (exchange) {
 		switch (method) {
 			case "GET": {
@@ -43,6 +43,22 @@ const handler = async (
 					.exec();
 
 				return res.status(200).send({ success: true, data: transactions });
+			}
+			case "POST": {
+				const newTransaction = {
+					userId: user._id,
+					exchangeId: exchange._id,
+					settingId: body.settingId,
+					totQty: body.totQty,
+					totAmount: body.totAmount,
+					transactionOrder: body.transactionOrder,
+				};
+				try {
+					const trx = await new Transaction(newTransaction).save();
+					return res.status(200).send({ success: true, data: trx });
+				} catch (error: any) {
+					return errors.errorHandler(res, error.message, null);
+				}
 			}
 
 			default:
